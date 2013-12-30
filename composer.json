@@ -10,6 +10,6 @@
         }
     ],
     "autoload": {
-        "files": ["src/vm.php"]
+        "files": ["src/machine.php"]
     }
 }
