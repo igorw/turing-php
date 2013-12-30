@@ -15,7 +15,7 @@ $rules = [
     [2, '_', '_', 'n', 1],
 ];
 
-// binary 11
+// empty tape
 $tape = [];
 
 $position = 0;
