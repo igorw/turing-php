@@ -1,5 +1,7 @@
 <?php
 
+namespace igorw\turing;
+
 // universal turing machine
 // based on Paul Rendell's Game of Life UTM
 // http://rendell-attic.org/gol/utm/utmprog.htm
@@ -125,7 +127,24 @@ $position = 23;
 $state = 1;
 $steps = 0;
 
-function match_rule(array $rules, $state, $read_val) {
+class Config
+{
+    public $tape;
+    public $position;
+    public $state;
+    public $steps;
+
+    function __construct(array $tape, $position, $state, $steps)
+    {
+        $this->tape = $tape;
+        $this->position = $position;
+        $this->state = $state;
+        $this->steps = $steps;
+    }
+}
+
+function match_rule(array $rules, $state, $read_val)
+{
     foreach ($rules as $rule) {
         list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
 
@@ -137,7 +156,12 @@ function match_rule(array $rules, $state, $read_val) {
     throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $state, $read_val));
 }
 
-while (!in_array($state, $accept_states)) {
+function step(Config $config)
+{
+    $tape = $config->tape;
+    $position = $config->position;
+    $state = $config->state;
+
     $read_val = isset($tape[$position]) ? $tape[$position] : '_';
     $matched_rule = match_rule($rules, $state, $read_val);
 
@@ -158,19 +182,32 @@ while (!in_array($state, $accept_states)) {
         }
     }
 
-    $state = $new_state;
-
-    $steps++;
+    return new Config(
+        $tape,
+        $position,
+        $new_state,
+        $steps+1
+    );
 }
 
-$render_cell = function ($cell, $cell_pos) use ($position) {
-    return ($position === $cell_pos) ? "($cell)" : $cell;
-};
+function run(array $rules, array $accept_states, Config $config)
+{
+    while (!in_array($config->state, $accept_states)) {
+        $config = step($config);
+    }
+}
+
+function render_cell($position)
+{
+    return function ($cell, $cell_pos) use ($position) {
+        return ($position === $cell_pos) ? "($cell)" : $cell;
+    };
+}
 
 echo sprintf("Tape: %s\n",
     trim(
         implode('',
-            array_map($render_cell, $tape, range(0, count($tape)-1))),
+            array_map(render_cell($position), $tape, range(0, count($tape)-1))),
         '_'));
 echo sprintf("Position: %s\n", $position);
 echo sprintf("State: %s\n", $state);
