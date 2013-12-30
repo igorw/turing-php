@@ -1,0 +1,12 @@
+{
+    "name": "igorw/turing",
+    "description": "Turing machine emulator in PHP.",
+    "keywords": ["turing", "turing-machine"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Wiedler",
+            "email": "igor@wiedler.ch"
+        }
+    ]
+}
