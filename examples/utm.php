@@ -114,7 +114,8 @@ $tape = str_split('0000000001ABABAAXBABDBBX110C11M1000C00M1111C00M1010C11M0010C1
 // 000 000000 101010 0
 // 000 101010 101010 0
 
-// descriptions
+// T description
+// the rules of the T machine, encoded onto the tape
 // write, direction, next offset read 0, next offset read 1
 // offsets are unary
 // 1 L 1L 2R
