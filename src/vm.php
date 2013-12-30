@@ -1,5 +1,7 @@
 <?php
 
+// turing machine, roughly based on Tom Stuart's "Understanding Computation"
+
 namespace igorw\turing;
 
 class Config
