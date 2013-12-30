@@ -8,5 +8,8 @@
             "name": "Igor Wiedler",
             "email": "igor@wiedler.ch"
         }
-    ]
+    ],
+    "autoload": {
+        "files": ["src/vm.php"]
+    }
 }
