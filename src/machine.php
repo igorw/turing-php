@@ -108,9 +108,13 @@ function step(array $rule, Config $config)
 // this may never halt
 
 /** @api */
-function run(array $rules, array $accept_states, Config $config)
+function run(array $rules, array $accept_states, Config $config, callable $on_step = null)
 {
     while (!in_array($config->state, $accept_states)) {
+        if ($on_step) {
+            $on_step($config);
+        }
+
         $rule = match($rules, $config);
         $config = step($rule, $config);
     }
@@ -123,16 +127,27 @@ function run(array $rules, array $accept_states, Config $config)
 /** @api */
 function run_debug(array $rules, array $accept_states, Config $config)
 {
-    while (!in_array($config->state, $accept_states)) {
+    $config = run($rules, $accept_states, $config, function (Config $config) {
         echo format_config($config);
         echo "--------\n";
-        $rule = match($rules, $config);
-        $config = step($rule, $config);
-    }
+    });
 
     echo format_config_steps($config);
 
     return $config;
+}
+
+// same as run, but aborts after N steps
+// this is useful to debug never-halting machines
+
+/** @api */
+function run_until(array $rules, array $accept_states, Config $config, $max_steps = 100000)
+{
+    return run($rules, $accept_states, $config, function (Config $config) use ($max_steps) {
+        if ($config->steps > $max_steps) {
+            throw new \RuntimeException("Exceeded maximum steps of '$max_steps'.");
+        }
+    });
 }
 
 function format_cell($position)
