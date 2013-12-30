@@ -4,6 +4,8 @@
 
 namespace igorw\turing;
 
+// the configuration holds the entire state of the machine
+// it is to be treated as an immutable value object
 class Config
 {
     public $tape;
@@ -20,6 +22,34 @@ class Config
     }
 }
 
+function read_tape(array $tape, $position)
+{
+    return isset($tape[$position]) ? $tape[$position] : '_';
+}
+
+function shift_tape_left(array $tape, $position)
+{
+    $position--;
+
+    if ($position < 0) {
+        $position++;
+        array_unshift($tape, '_');
+    }
+
+    return [$tape, $position];
+}
+
+function shift_tape_right(array $tape, $position)
+{
+    $position++;
+
+    if ($position >= count($tape)) {
+        array_push($tape, '_');
+    }
+
+    return [$tape, $position];
+}
+
 function match_rule(array $rules, $state, $read_val)
 {
     foreach ($rules as $rule) {
@@ -33,29 +63,37 @@ function match_rule(array $rules, $state, $read_val)
     throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $state, $read_val));
 }
 
-function step(array $rules, Config $config)
+// lookup the rule in the rules table that corresponds to
+// the current state and value under the head
+//
+// $rules is an array of quintuples
+//  [state, read condition, write value, move direction, new state]
+function match(array $rules, Config $config)
+{
+    $read_val = read_tape($config->tape, $config->position);
+    return match_rule($rules, $config->state, $read_val);
+}
+
+// perform one computational step
+//
+//  * write value from rule
+//  * adjust head position
+//  * update state
+//
+// returns the new configuration
+function step(array $rule, Config $config)
 {
     $tape = $config->tape;
     $position = $config->position;
 
-    $read_val = isset($tape[$position]) ? $tape[$position] : '_';
-    $matched_rule = match_rule($rules, $config->state, $read_val);
-
-    list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $matched_rule;
+    list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
 
     $tape[$position] = $write_val;
 
     if ('l' === $move_dir) {
-        $position--;
-        if ($position < 0) {
-            $position++;
-            array_unshift($tape, '_');
-        }
+        list($tape, $position) = shift_tape_left($tape, $position);
     } else if ('r' === $move_dir) {
-        $position++;
-        if ($position >= count($tape)) {
-            array_push($tape, '_');
-        }
+        list($tape, $position) = shift_tape_right($tape, $position);
     }
 
     return new Config(
@@ -66,11 +104,33 @@ function step(array $rules, Config $config)
     );
 }
 
+// run through a set of rules until an accept state is reached
+// this may never halt
+
+/** @api */
 function run(array $rules, array $accept_states, Config $config)
 {
     while (!in_array($config->state, $accept_states)) {
-        $config = step($rules, $config);
+        $rule = match($rules, $config);
+        $config = step($rule, $config);
     }
+
+    return $config;
+}
+
+// same as run, but prints the current state at every step along the way
+
+/** @api */
+function run_debug(array $rules, array $accept_states, Config $config)
+{
+    while (!in_array($config->state, $accept_states)) {
+        echo format_config($config);
+        echo "--------\n";
+        $rule = match($rules, $config);
+        $config = step($rule, $config);
+    }
+
+    echo format_config_steps($config);
 
     return $config;
 }
@@ -95,6 +155,11 @@ function format_config(Config $config)
                 '_')),
         sprintf("Position: %s\n", $config->position),
         sprintf("State: %s\n", $config->state),
-        sprintf("Steps: %s\n", $config->steps),
     ]);
+}
+
+function format_config_steps(Config $config)
+{
+    return format_config($config).
+        sprintf("Steps: %s\n", $config->steps);
 }

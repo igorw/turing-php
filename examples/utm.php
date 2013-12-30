@@ -134,4 +134,4 @@ $result = t\run(
     new t\Config($tape, $position, $state)
 );
 
-echo t\format_config($result);
+echo t\format_config_steps($result);

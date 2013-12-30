@@ -26,10 +26,8 @@ $tape = ['1', '0', '1', '1'];
 $position = 3;
 $state = 1;
 
-$result = t\run(
+t\run_debug(
     $rules,
     $accept_states,
     new t\Config($tape, $position, $state)
 );
-
-echo t\format_config($result);
