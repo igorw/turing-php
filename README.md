@@ -1,5 +1,7 @@
 # turing-php
 
+![turing machine](doc/machine.png)
+
 Turing machine emulator in PHP.
 
 ## References
