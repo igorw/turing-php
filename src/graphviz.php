@@ -5,7 +5,7 @@ namespace igorw\turing;
 function graphviz_rules(array $rules, array $accept_states)
 {
     $template = <<<EOF
-digraph finite_state_machine {
+digraph turing_machine {
     rankdir=LR;
 %s
 }
