@@ -26,8 +26,8 @@ $tape = ['1', '0', '1', '1'];
 $position = 3;
 $state = 1;
 
-t\run_debug(
+return [
     $rules,
     $accept_states,
-    new t\Config($tape, $position, $state)
-);
+    new t\Config($tape, $position, $state),
+];

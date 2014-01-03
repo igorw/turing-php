@@ -1,0 +1,68 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../vendor/docopt/docopt/src/docopt.php';
+
+use igorw\turing as t;
+
+$doc = <<<DOC
+Turing Machine.
+
+Usage:
+  machine [run] [--] <file>
+  machine debug [--] <file>
+  machine until <n> [--] <file>
+  machine graphviz [--] <file>
+  machine (-h | --help)
+
+Options:
+  -h --help     Show this screen.
+
+DOC;
+
+$args = Docopt\docopt($doc);
+
+if (!file_exists($args['<file>'])) {
+    echo "ERROR: Non-existent file {$args['<file>']} provided.\n";
+    exit(1);
+}
+
+list($rules, $accept_states, $config) = require $args['<file>'];
+
+if ($args['graphviz']) {
+    echo t\graphviz_rules($rules, $accept_states);
+    exit(0);
+}
+
+if ($args['debug']) {
+    t\run_debug(
+        $rules,
+        $accept_states,
+        $config
+    );
+    exit(0);
+}
+
+if ($args['until']) {
+    try {
+        $result = t\run_until(
+            $rules,
+            $accept_states,
+            $config,
+            $args['<n>']
+        );
+        echo t\format_config_steps($result);
+        exit(0);
+    } catch (\Exception $e) {
+        echo "ERROR: {$e->getMessage()}\n";
+        exit(1);
+    }
+}
+
+$result = t\run(
+    $rules,
+    $accept_states,
+    $config
+);
+echo t\format_config_steps($result);

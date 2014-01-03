@@ -129,10 +129,8 @@ $tape = str_split('0000000001ABABAAXBABDBBX110C11M1000C00M1111C00M1010C11M0010C1
 $position = 23;
 $state = 1;
 
-$result = t\run(
+return [
     $rules,
     $accept_states,
-    new t\Config($tape, $position, $state)
-);
-
-echo t\format_config_steps($result);
+    new t\Config($tape, $position, $state),
+];

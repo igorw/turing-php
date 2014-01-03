@@ -20,9 +20,8 @@ $tape = [];
 $position = 0;
 $state = 1;
 
-t\run_until(
+return [
     $rules,
     $accept_states,
     new t\Config($tape, $position, $state),
-    500000
-);
+];

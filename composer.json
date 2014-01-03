@@ -9,7 +9,10 @@
             "email": "igor@wiedler.ch"
         }
     ],
+    "require-dev": {
+        "docopt/docopt": "dev-master"
+    },
     "autoload": {
-        "files": ["src/machine.php"]
+        "files": ["src/machine.php", "src/graphviz.php"]
     }
 }
