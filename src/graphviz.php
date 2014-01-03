@@ -23,6 +23,8 @@ EOF;
     foreach ($rules as $rule) {
         list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
 
+        $move_dir = strtoupper($move_dir);
+
         $out .= "    $init_state -> $new_state [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
     }
 
