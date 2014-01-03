@@ -20,13 +20,33 @@ EOF;
 
     $out .= "    node [shape = circle];\n";
 
+    $self_references = [];
+
     foreach ($rules as $rule) {
         list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
 
         $move_dir = strtoupper($move_dir);
 
+        if ($init_state === $new_state) {
+            $self_references[$init_state][] = [$read_cond, $write_val, $move_dir];
+            continue;
+        }
+
         $out .= "    $init_state -> $new_state [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
     }
 
+    foreach ($self_references as $state => $refs) {
+        $out .= "    $state -> $state [ label = \"";
+        $out .= implode("\n", array_map('igorw\turing\format_ref', $refs));
+        $out .= "\" ];\n";
+    }
+
     return sprintf($template, $out);
+}
+
+function format_ref(array $ref)
+{
+    list($read_cond, $write_val, $move_dir) = $ref;
+
+    return "$read_cond, $write_val, $move_dir";
 }
