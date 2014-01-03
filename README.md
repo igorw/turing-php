@@ -60,7 +60,8 @@ You can dump the rules to the graphviz format and then feed that into `dot` to
 get a pretty graphical representation of the state transitions.
 
     $ bin/machine graphviz examples/increment.php | dot -Tpng -o doc/increment.png
-    ERROR: Exceeded maximum steps of '10'.
+
+Output:
 
 ![graph of increment state transitions](doc/increment.png)
 
