@@ -132,5 +132,5 @@ $state = 1;
 return [
     $rules,
     $accept_states,
-    new t\Config($tape, $position, $state),
+    new t\Config(new t\Tape($tape, $position), $state),
 ];

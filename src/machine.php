@@ -9,45 +9,70 @@ namespace igorw\turing;
 class Config
 {
     public $tape;
-    public $position;
     public $state;
     public $steps;
 
-    function __construct(array $tape, $position, $state, $steps = 0)
+    function __construct(Tape $tape, $state, $steps = 0)
     {
         $this->tape = $tape;
-        $this->position = $position;
         $this->state = $state;
         $this->steps = $steps;
     }
 }
 
-function read_tape(array $tape, $position)
+class Tape
 {
-    return isset($tape[$position]) ? $tape[$position] : '_';
-}
+    public $tape;
+    public $position;
 
-function shift_tape_left(array $tape, $position)
-{
-    $position--;
+    function __construct(array $tape, $position)
+    {
+        $this->tape = $tape;
+        $this->position = $position;
+    }
 
-    if ($position < 0) {
+    function read()
+    {
+        return isset($this->tape[$this->position]) ? $this->tape[$this->position] : '_';
+    }
+
+    function write($value)
+    {
+        $tape = $this->tape;
+
+        $tape[$this->position] = $value;
+
+        return new Tape($tape, $this->position);
+    }
+
+    function shift_left()
+    {
+        $tape = $this->tape;
+        $position = $this->position;
+
+        $position--;
+
+        if ($position < 0) {
+            $position++;
+            array_unshift($tape, '_');
+        }
+
+        return new Tape($tape, $position);
+    }
+
+    function shift_right()
+    {
+        $tape = $this->tape;
+        $position = $this->position;
+
         $position++;
-        array_unshift($tape, '_');
+
+        if ($position >= count($tape)) {
+            array_push($tape, '_');
+        }
+
+        return new Tape($tape, $position);
     }
-
-    return [$tape, $position];
-}
-
-function shift_tape_right(array $tape, $position)
-{
-    $position++;
-
-    if ($position >= count($tape)) {
-        array_push($tape, '_');
-    }
-
-    return [$tape, $position];
 }
 
 function match_rule(array $rules, $state, $read_val)
@@ -70,7 +95,7 @@ function match_rule(array $rules, $state, $read_val)
 //  [state, read condition, write value, move direction, new state]
 function match(array $rules, Config $config)
 {
-    $read_val = read_tape($config->tape, $config->position);
+    $read_val = $config->tape->read();
     return match_rule($rules, $config->state, $read_val);
 }
 
@@ -84,21 +109,19 @@ function match(array $rules, Config $config)
 function step(array $rule, Config $config)
 {
     $tape = $config->tape;
-    $position = $config->position;
 
     list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
 
-    $tape[$position] = $write_val;
+    $tape = $tape->write($write_val);
 
     if ('l' === $move_dir) {
-        list($tape, $position) = shift_tape_left($tape, $position);
+        $tape = $tape->shift_left();
     } else if ('r' === $move_dir) {
-        list($tape, $position) = shift_tape_right($tape, $position);
+        $tape = $tape->shift_right();
     }
 
     return new Config(
         $tape,
-        $position,
         $new_state,
         $config->steps + 1
     );
@@ -164,11 +187,11 @@ function format_config(Config $config)
             trim(
                 implode('',
                     array_map(
-                        format_cell($config->position),
-                        $config->tape,
-                        range(0, count($config->tape)-1))),
+                        format_cell($config->tape->position),
+                        $config->tape->tape,
+                        range(0, count($config->tape->tape)-1))),
                 '_')),
-        sprintf("Position: %s\n", $config->position),
+        sprintf("Position: %s\n", $config->tape->position),
         sprintf("State: %s\n", $config->state),
     ]);
 }
