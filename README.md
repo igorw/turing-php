@@ -22,6 +22,17 @@ configuration.
     State: 3
     Steps: 6
 
+You can also provide your own tape and start position with the `-t` and `p`
+options:
+
+    $ bin/machine examples/increment.php -p 1 -t 10
+    Tape: 1(1)
+    Position: 1
+    State: 3
+    Steps: 2
+
+Note that the rules may require you to provide a valid initial position.
+
 ### `debug`
 
 If you want to get better information about what the machine is doing while
