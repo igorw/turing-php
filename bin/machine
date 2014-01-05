@@ -10,14 +10,16 @@ $doc = <<<DOC
 Turing Machine.
 
 Usage:
-  machine [run] [--] <file>
+  machine [run] [--tape=TAPE] [--position=POSITION] [--] <file>
   machine debug [--] <file>
   machine until <n> [--] <file>
   machine graphviz [--] <file>
   machine (-h | --help)
 
 Options:
-  -h --help     Show this screen.
+  -h --help         Show this screen.
+  -t --tape=        Use a custom tape.
+  -p --position=    Use a custom tape position.
 
 DOC;
 
@@ -29,6 +31,16 @@ if (!file_exists($args['<file>'])) {
 }
 
 list($rules, $accept_states, $config) = require $args['<file>'];
+
+if (isset($args['--tape'])) {
+    $tape = strlen($args['--tape']) ? str_split($args['--tape']) : [];
+    $config = new t\Config($tape, $config->position, $config->state);
+}
+
+if (isset($args['--position'])) {
+    $position = (int) $args['--position'];
+    $config = new t\Config($config->tape, $position, $config->state);
+}
 
 if ($args['graphviz']) {
     echo t\graphviz_rules($rules, $accept_states);
