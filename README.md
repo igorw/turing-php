@@ -37,8 +37,8 @@ Note that the rules may require you to provide a valid initial position.
 
 If you want to get better information about what the machine is doing while
 running, you can run it in debug mode. This will make it print the tape and
-configuration after every transition. This can be useful when inspecting non-
-terminating machines.
+configuration after every transition. This can be useful when inspecting
+non-terminating machines.
 
     $ bin/machine debug examples/increment.php
     Tape: 101(1)
