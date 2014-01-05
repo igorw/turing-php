@@ -10,9 +10,9 @@ $doc = <<<DOC
 Turing Machine.
 
 Usage:
-  machine [run] [--tape=TAPE] [--position=POSITION] [--] <file>
-  machine debug [--] <file>
-  machine until <n> [--] <file>
+  machine [run] [-t=TAPE] [-p=POS] [--] <file>
+  machine debug [-t=TAPE] [-p=POS] [--] <file>
+  machine until [-t=TAPE] [-p=POS] <n> [--] <file>
   machine graphviz [--] <file>
   machine (-h | --help)
 
