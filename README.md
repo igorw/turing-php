@@ -22,8 +22,8 @@ configuration.
     State: 3
     Steps: 6
 
-You can also provide your own tape and start position with the `-t` and `p`
-options:
+You can also provide your own initial tape and start position with the `-t`
+and `-p` options:
 
     $ bin/machine examples/increment.php -p 1 -t 10
     Tape: 1(1)
