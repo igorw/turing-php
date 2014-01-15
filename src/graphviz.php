@@ -32,11 +32,11 @@ EOF;
             continue;
         }
 
-        $out .= "    $init_state -> $new_state [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
+        $out .= "    \"$init_state\" -> \"$new_state\" [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
     }
 
     foreach ($self_references as $state => $refs) {
-        $out .= "    $state -> $state [ label = \"";
+        $out .= "    \"$state\" -> \"$state\" [ label = \"";
         $out .= implode("\n", array_map('igorw\turing\format_ref', $refs));
         $out .= "\" ];\n";
     }
