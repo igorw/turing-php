@@ -53,8 +53,8 @@ function shift_tape_right(array $tape, $position)
 // lookup the rule in the rules table that corresponds to
 // the current state and value under the head
 //
-// $rules is an array of quintuples
-//  [state, read condition, write value, move direction, new state]
+// $rules is a nested array representing a quintuple
+//  [state => [read condition => [write value, move direction, new state]]]
 function match(array $rules, Config $config)
 {
     $read_val = read_tape($config->tape, $config->position);
