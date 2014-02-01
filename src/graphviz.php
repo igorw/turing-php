@@ -22,17 +22,19 @@ EOF;
 
     $self_references = [];
 
-    foreach ($rules as $rule) {
-        list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
+    foreach ($rules as $init_state => $cases) {
+        foreach ($cases as $read_cond => $rule) {
+            list($write_val, $move_dir, $new_state) = $rule;
 
-        $move_dir = strtoupper($move_dir);
+            $move_dir = strtoupper($move_dir);
 
-        if ($init_state === $new_state) {
-            $self_references[$init_state][] = [$read_cond, $write_val, $move_dir];
-            continue;
+            if ($init_state === $new_state) {
+                $self_references[$init_state][] = [$read_cond, $write_val, $move_dir];
+                continue;
+            }
+
+            $out .= "    \"$init_state\" -> \"$new_state\" [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
         }
-
-        $out .= "    \"$init_state\" -> \"$new_state\" [ label = \"$read_cond, $write_val, $move_dir\" ];\n";
     }
 
     foreach ($self_references as $state => $refs) {

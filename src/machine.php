@@ -50,19 +50,6 @@ function shift_tape_right(array $tape, $position)
     return [$tape, $position];
 }
 
-function match_rule(array $rules, $state, $read_val)
-{
-    foreach ($rules as $rule) {
-        list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
-
-        if ($init_state === $state && $read_val === $read_cond) {
-            return $rule;
-        }
-    }
-
-    throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $state, $read_val));
-}
-
 // lookup the rule in the rules table that corresponds to
 // the current state and value under the head
 //
@@ -71,7 +58,12 @@ function match_rule(array $rules, $state, $read_val)
 function match(array $rules, Config $config)
 {
     $read_val = read_tape($config->tape, $config->position);
-    return match_rule($rules, $config->state, $read_val);
+
+    if (!isset($rules[$config->state][$read_val])) {
+        throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $state, $read_val));
+    }
+
+    return $rules[$config->state][$read_val];
 }
 
 // perform one computational step
@@ -86,7 +78,7 @@ function step(array $rule, Config $config)
     $tape = $config->tape;
     $position = $config->position;
 
-    list($init_state, $read_cond, $write_val, $move_dir, $new_state) = $rule;
+    list($write_val, $move_dir, $new_state) = $rule;
 
     $tape[$position] = $write_val;
 

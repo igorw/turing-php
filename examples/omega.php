@@ -11,7 +11,7 @@ $accept_states = [];
 // quintuple
 // state, read condition, write value, move direction, new state
 $rules = [
-    [1, '_', '_', 'n', 1],
+    1 => ['_' => ['_', 'n', 1]],
 ];
 
 // empty tape

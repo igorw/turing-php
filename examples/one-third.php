@@ -20,10 +20,10 @@ $accept_states = [];
 // quintuple
 // state, read condition, write value, move direction, new state
 $rules = [
-    ['b', '_', '0', 'r', 'c'],
-    ['c', '_', '_', 'r', 'e'],
-    ['e', '_', '1', 'r', 'f'],
-    ['f', '_', '_', 'r', 'b'],
+    'b' => ['_' => ['0', 'r', 'c']],
+    'c' => ['_' => ['_', 'r', 'e']],
+    'e' => ['_' => ['1', 'r', 'f']],
+    'f' => ['_' => ['_', 'r', 'b']],
 ];
 
 $tape = [];
