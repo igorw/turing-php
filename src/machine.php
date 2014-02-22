@@ -60,7 +60,7 @@ function match(array $rules, Config $config)
     $read_val = read_tape($config->tape, $config->position);
 
     if (!isset($rules[$config->state][$read_val])) {
-        throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $state, $read_val));
+        throw new \RuntimeException(sprintf('No rule matched state %s, value %s.', $config->state, $read_val));
     }
 
     return $rules[$config->state][$read_val];
